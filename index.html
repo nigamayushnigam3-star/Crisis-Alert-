@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRISIS CONNECT</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading Emergency Response System...</div>
+  </div>
+
+  <div class="page-content" id="page-content">
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <nav id="main-nav">
+          <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            <span>CRISIS CONNECT</span>
+          </div>
+          <a href="#home" class="active" onclick="showPage('home')">Home</a>
+          <a href="#preparedness" onclick="showPage('preparedness')">Emergency Preparedness</a>
+          <a href="#about" onclick="showPage('about')">About Us</a>
+          <a href="#contact" onclick="showPage('contact')">Contact Rescue Team</a>
+          <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="theme-icon"></i>
+            <span id="theme-text">Dark</span>
+          </button>
+          <div class="disaster-dashboard" id="disaster-dashboard">
+            <div class="dashboard-header" onclick="toggleDashboard()">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Live Alerts</span>
+            </div>
+            <div class="dashboard-content" id="dashboard-content">
+              <div class="alert-item loading">Loading disaster data...</div>
+            </div>
+          </div>
+          <div class="prediction-dashboard" id="prediction-dashboard">
+            <div class="dashboard-header" onclick="togglePredictionDashboard()">
+              <i class="fas fa-chart-line"></i>
+              <span>Predictions</span>
+            </div>
+            <div class="dashboard-content" id="prediction-content">
+              <div class="alert-item loading">Loading predictions...</div>
+            </div>
+          </div>
+          <div class="hamburger-menu" onclick="toggleLoginSlider()">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </nav>
+
+        <nav id="victim-nav" style="display: none;">
+          <a href="#victim-home" class="active">Emergency Alert</a>
+          <div class="user-info" id="victim-user-info" style="display: none;"></div>
+          <button class="logout-btn" onclick="logoutVictim()" style="display: none;" id="victim-logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+          <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="theme-icon-victim"></i>
+            <span id="theme-text-victim">Dark</span>
+          </button>
+          <div class="disaster-dashboard" id="disaster-dashboard-victim">
+            <div class="dashboard-header" onclick="toggleDashboard()">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Live Alerts</span>
+            </div>
+            <div class="dashboard-content" id="dashboard-content-victim">
+              <div class="alert-item loading">Loading disaster data...</div>
+            </div>
+          </div>
+          <div class="prediction-dashboard" id="prediction-dashboard-victim">
+            <div class="dashboard-header" onclick="togglePredictionDashboard()">
+              <i class="fas fa-chart-line"></i>
+              <span>Predictions</span>
+            </div>
+            <div class="dashboard-content" id="prediction-content-victim">
+              <div class="alert-item loading">Loading predictions...</div>
+            </div>
+          </div>
+        </nav>
+        <nav id="rescue-nav" style="display: none;">
+          <a href="#rescue-home" class="active">Command Center</a>
+          <div class="user-info" id="rescue-user-info" style="display: none;"></div>
+          <button class="logout-btn" onclick="logoutRescue()" style="display: none;" id="rescue-logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+          <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="theme-icon-rescue"></i>
+            <span id="theme-text-rescue">Dark</span>
+          </button>
+          <div class="disaster-dashboard" id="disaster-dashboard-rescue">
+            <div class="dashboard-header" onclick="toggleDashboard()">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Live Alerts</span>
+            </div>
+            <div class="dashboard-content" id="dashboard-content-rescue">
+              <div class="alert-item loading">Loading disaster data...</div>
+            </div>
+          </div>
+          <div class="prediction-dashboard" id="prediction-dashboard-rescue">
+            <div class="dashboard-header" onclick="togglePredictionDashboard()">
+              <i class="fas fa-chart-line"></i>
+              <span>Predictions</span>
+            </div>
+            <div class="dashboard-content" id="prediction-content-rescue">
+              <div class="alert-item loading">Loading predictions...</div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live News Feed -->
+  <div class="news-feed-banner" id="news-feed-banner">
+    <div class="container">
+      <div class="news-feed-content">
+        <div class="news-header">
+          <i class="fas fa-newspaper"></i>
+          <span>Latest Emergency Updates</span>
+        </div>
+        <div class="news-ticker" id="news-ticker">
+          <div class="news-item">Loading emergency updates...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+      <section id="home" class="hero">
+        <div class="hero-background">
+          <div class="animated-bg"></div>
+          <div class="grid-pattern"></div>
+          <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+          </div>
+        </div>
+        
+        <h1>Emergency <span class="highlight">Response</span> System</h1>
+        <p>
+          Advanced disaster alert platform connecting citizens with emergency responders.
+          Send instant SOS alerts with precise location data for rapid response coordination.
+        </p>
+        
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Emergency Monitoring</div>
+            <p>Our emergency response center operates around the clock with dedicated professionals monitoring all incoming alerts. No matter when disaster strikes - day or night, weekends or holidays - our trained operators are ready to coordinate immediate assistance and dispatch rescue teams to your location.</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">&lt;2min</div>
+            <div class="stat-label">Average Response Time</div>
+            <p>From the moment you send an SOS alert, our system processes your emergency within seconds. Our automated dispatch system immediately notifies the nearest rescue teams, emergency services, and medical personnel. Most alerts are acknowledged and response teams are mobilized in under 2 minutes.</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">GPS</div>
+            <div class="stat-label">Precise Location</div>
+            <p>Advanced GPS technology pinpoints your exact location with meter-level accuracy. Even in remote areas or during network disruptions, our system captures and transmits your coordinates to rescue teams, ensuring they can find you quickly regardless of terrain or weather conditions.</p>
+          </div>
+        </div>
+      </section>
+
+      <div id="login-section">
+        <div class="card" style="text-align: center; max-width: 480px; margin: 48px auto;">
+          <h2><i class="fas fa-sign-in-alt"></i>Access Portal</h2>
+          <p style="margin-bottom: 32px;">Select your role to access the emergency response system</p>
+          <div>
+            <button class="role-btn" onclick="showPage('victim')">
+              <i class="fas fa-user"></i> Victim Access
+            </button>
+            <button class="role-btn rescue" onclick="showPage('rescue')">
+              <i class="fas fa-ambulance"></i> Rescue Team
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rescue Team Directory Section -->
+      <section class="hero">
+        <div style="margin: 2rem auto;">
+          <h2 style="text-align: center; margin-bottom: 2rem;"><i class="fas fa-users"></i> Rescue Team Directory</h2>="text-align: center; margin-bottom: 2rem;"><i class="fas fa-users"></i> Rescue Team Directory</h2>
+          
+          <!-- Team Leaders -->
+          <h3 style="text-align: center; margin: 2rem 0 1rem 0; color: #ff4757;">Team Leaders</h3>
+          <div class="stats">
+            <div class="stat-card" onclick="showPage('ayush-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="dr Ayush nigam.jpg" alt="Dr. Ayush Nigam" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">Dr. AYUSH NIGAM</div>
+              <p>Chief Emergency Coordinator</p>
+            </div>
+            <div class="stat-card" onclick="showPage('soubhagya-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="soubhagya gupta .jpg" alt="Dr. Soubhagya Gupta" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">Dr.Soubhagya Gupta </div>
+              <p>Disaster Response Manager</p>
+            </div>
+            <div class="stat-card" onclick="showPage('prateek-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="prateek awasthi.jpg" alt="Prateek Awasthi" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">Dr.Prateek Awasthi</div>
+              <p>Technical Operations Head</p>
+            </div>
+          </div>
+          
+          <!-- Regional Coordinators -->
+          <h3 style="text-align: center; margin: 2rem 0 1rem 0; color: #ff4757;">Regional Coordinators</h3>
+          <div class="stats">
+            <div class="stat-card" onclick="showPage('prince-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="prince yadav.jpg" alt="Prince Yadav" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; object-position: center top;"></div>
+              <div class="stat-label">North India</div>
+              <p><strong>PRINCE YADAV</strong><br>+91-98318032476</p>
+            </div>
+            <div class="stat-card" onclick="showPage('aditya-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="Aditya Gupta.jpg" alt="Aditya Gupta" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">South India</div>
+              <p><strong>Aditya gupta</strong><br>+91-7310332505</p>
+            </div>
+            <div class="stat-card" onclick="showPage('aman-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="md.Aman.jpg" alt="MD.AMAN" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">East India</div>
+              <p><strong>MD.AMAN</strong><br>+91-6307426226</p>
+            </div>
+            <div class="stat-card" onclick="showPage('avinash-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="avinash upadhaya.jpg" alt="Avinash Upadhyay" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">West India</div>
+              <p><strong>AVINASH UPADHYAY</strong><br>+91-7398421459</p>
+            </div>
+          </div>
+          
+          <!-- Specialized Units -->
+          <h3 style="text-align: center; margin: 2rem 0 1rem 0; color: #ff4757;">Specialized Units</h3>
+          <div class="stats">
+            <div class="stat-card" onclick="showPage('vaibhav-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="vaibhav nigam.jpg" alt="Dr. Vaibhav Nigam" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">Medical Emergency</div>
+              <p>Dr.VAIBHAV NIGAM</p>
+            </div>
+            <div class="stat-card" onclick="showPage('aman-nigam-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="aman nigam.jpg" alt="Captain Aman Nigam" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">Fire & Rescue</div>
+              <p>Captain Aman Nigam </p>
+            </div>
+            <div class="stat-card" onclick="showPage('akash-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="akash nigam .jpg" alt="Engineer Akash Nigam" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">Flood Response</div>
+              <p>Engineer Akash Nigam </p>
+            </div>
+            <div class="stat-card" onclick="showPage('geologist-ayush-profile')" style="cursor: pointer;">
+              <div class="stat-number"><img src="geologist ayush nigam.jpg" alt="Geologist Ayush Nigam" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+              <div class="stat-label">Earthquake Response</div>
+              <p>Geologist Ayush Nigam </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Disaster Response Gallery -->
+      <section class="hero">
+        <h1><i class="fas fa-images"></i> Emergency Response Gallery</h1>
+        <p>Real-time documentation of our rescue operations and disaster response efforts</p>
+        
+        <div class="disaster-gallery">
+          <div class="gallery-item">
+            <img src="Gemini_Generated_Image_9mhm0f9mhm0f9mhm.jpg" alt="Flood Rescue Operations">
+            <div class="gallery-overlay">
+              <h3>Flood Rescue</h3>
+              <p>Emergency evacuation during monsoon floods</p>
+            </div>
+          </div>
+          <div class="gallery-item">
+            <img src="Gemini_Generated_Image_rs0dfcrs0dfcrs0d.jpg" alt="Fire Emergency Response">
+            <div class="gallery-overlay">
+              <h3>Fire Response</h3>
+              <p>Firefighters battling industrial blazes</p>
+            </div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=300&fit=crop" alt="Medical Emergency">
+            <div class="gallery-overlay">
+              <h3>Medical Emergency</h3>
+              <p>Rapid medical response and evacuation</p>
+            </div>
+          </div>
+          <div class="gallery-item">
+            <img src="Gemini_Generated_Image_28cyp28cyp28cyp2.png" alt="Earthquake Response">
+            <div class="gallery-overlay">
+              <h3>Earthquake Response</h3>
+              <p>Search and rescue in earthquake zones</p>
+            </div>
+          </div>
+          <div class="gallery-item">
+            <img src="Gemini_Generated_Image_se6xm2se6xm2se6x.png" alt="Storm Response">
+            <div class="gallery-overlay">
+              <h3>Storm Response</h3>
+              <p>Emergency teams during severe weather</p>
+            </div>
+          </div>
+          <div class="gallery-item">
+            <img src="Gemini_Generated_Image_godmsagodmsagodm.png" alt="Rescue Training">
+            <div class="gallery-overlay">
+              <h3>Training Operations</h3>
+              <p>Continuous training for emergency readiness</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Rescue Team Section on Home Page -->
+      <section class="hero">
+        <h1><i class="fas fa-phone-alt"></i> Contact Rescue Team</h1>
+        <p>Get in touch with our emergency response teams and support services</p>
+        
+        <div class="dashboard" style="margin: 2rem 0;">
+          <div class="card">
+            <h2><i class="fas fa-ambulance"></i>Emergency Hotlines</h2>
+            <div style="text-align: left; margin: 1rem 0;">
+              <p><strong><i class="fas fa-phone"></i> National Emergency:</strong> 112</p>
+              <p><strong><i class="fas fa-fire"></i> Fire Department:</strong> 101</p>
+              <p><strong><i class="fas fa-user-md"></i> Medical Emergency:</strong> 108</p>
+              <p><strong><i class="fas fa-shield-alt"></i> Police:</strong> 100</p>
+              <p><strong><i class="fas fa-exclamation-triangle"></i> Disaster Management:</strong> 1070</p>
+            </div>
+            <div class="status success" style="display: block; margin-top: 1rem;">
+              <i class="fas fa-info-circle"></i> These numbers are available 24/7 across India
+            </div>
+          </div>
+          
+          <div class="card">
+            <h2><i class="fas fa-headset"></i>Support Center</h2>
+            <div style="text-align: left; margin: 1rem 0;">
+              <p><strong><i class="fas fa-envelope"></i> Email:</strong> emergency@rescuesupport.in</p>
+              <p><strong><i class="fas fa-phone"></i> Support Line:</strong> +91-9876543210</p>
+              <p><strong><i class="fas fa-clock"></i> Hours:</strong> 24/7 Emergency Support</p>
+              <p><strong><i class="fas fa-map-marker-alt"></i> Address:</strong> Emergency Response Center<br>123 Safety Street, New Delhi, India</p>
+            </div>
+            <button class="role-btn" style="margin: 1rem 0;" onclick="alert('Emergency contact initiated! Help is on the way.')">
+              <i class="fas fa-phone"></i> Call Emergency Support
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Disaster Management Training Videos -->
+      <section class="hero">
+        <h1><i class="fas fa-play-circle"></i> Disaster Management Training</h1>
+        <p>Educational videos on disaster preparedness and rescue operations</p>
+        
+        <div class="video-gallery">
+          <div class="video-item">
+            <iframe src="https://www.youtube.com/embed/BLEPakj1YTY" title="Earthquake Safety" frameborder="0" allowfullscreen></iframe>
+            <div class="video-info">
+              <h3>Earthquake Safety & Response</h3>
+              <p>Learn essential earthquake safety measures and emergency response protocols</p>
+            </div>
+          </div>
+          <div class="video-item">
+            <iframe src="https://www.youtube.com/embed/43M5mZuzHF8" title="Flood Safety" frameborder="0" allowfullscreen></iframe>
+            <div class="video-info">
+              <h3>Flood Emergency Management</h3>
+              <p>Comprehensive guide to flood preparedness and rescue operations</p>
+            </div>
+          </div>
+          <div class="video-item">
+            <iframe src="https://www.youtube.com/embed/kE3XAwR412I" title="Family emergency" frameborder="0" allowfullscreen></iframe>
+            <div class="video-info">
+              <h3>prepare a family emergency plan </h3>
+              <p> Family safety , A plan for handle emergency </p>
+            </div>
+          </div>
+          <div class="video-item">
+            <iframe src="https://www.youtube.com/embed/Z-w_z9yobpE" title="First Aid" frameborder="0" allowfullscreen></iframe>
+            <div class="video-info">
+              <h3>Volcanic Eruption</h3>
+              <p>prepare for a Volcanic Eruption </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Us Section on Home Page -->
+      <section class="hero">
+        <h1><i class="fas fa-info-circle"></i> About Us</h1>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number"><i class="fas fa-users"></i></div>
+            <div class="stat-label">Our Team</div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Dedicated emergency response professionals working 24/7 to save lives and provide immediate assistance during disasters.</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number"><i class="fas fa-shield-alt"></i></div>
+            <div class="stat-label">Our Mission</div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">To provide rapid emergency response services and connect victims with rescue teams through advanced technology and real-time coordination.</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number"><i class="fas fa-heart"></i></div>
+            <div class="stat-label">Our Values</div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Compassion, reliability, and innovation in emergency response. Every second counts when lives are at stake.</p>
+          </div>
+        </div>
+        
+        <div class="card" style="max-width: 800px; margin: 2rem auto; text-align: left;">
+          <h2><i class="fas fa-building"></i>Emergency Response System</h2>
+          <p style="margin: 1rem 0; line-height: 1.6;">Founded in 2025, our Emergency Response System is a cutting-edge platform designed to bridge the gap between disaster victims and rescue teams. We leverage modern technology including GPS tracking, real-time mapping, and AI-powered assistance to ensure rapid response during emergencies.</p>
+          
+          <h3 style="margin: 1.5rem 0 0.5rem 0;"><i class="fas fa-cogs"></i> Our Technology</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 2rem;">
+            <li>Real-time GPS location tracking</li>
+            <li>Interactive emergency mapping system</li>
+            <li>AI-powered disaster safety chatbot</li>
+            <li>Instant SOS alert system</li>
+            <li>Multi-platform accessibility</li>
+          </ul>
+          
+          <h3 style="margin: 1.5rem 0 0.5rem 0;"><i class="fas fa-award"></i> Our Achievements</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 2rem;">
+            <li>Successfully coordinated 1000+ emergency responses</li>
+            <li>Average response time under 2 minutes</li>
+            <li>24/7 monitoring and support</li>
+            <li>Partnerships with local emergency services</li>
+            <li>Advanced disaster preparedness training</li>
+          </ul>
+        </div>
+      </section>
+
+
+    </div>
+
+    <!-- Victim Access Page -->
+    <div id="victim-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <!-- Disaster Selection Form -->
+      <div id="disaster-selection" class="disaster-selection">
+        <div class="card">
+          <h1 style="text-align: center; margin-bottom: 1rem;">
+            <i class="fas fa-exclamation-triangle"></i> Emergency Type Selection
+          </h1>
+          <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">
+            Please select the type of emergency you are experiencing to get targeted assistance
+          </p>
+          
+          <div class="disaster-grid">
+            <div class="disaster-card" onclick="selectEmergencyType('flood')" data-type="flood">
+              <i class="fas fa-water"></i>
+              <h3>Flood</h3>
+            </div>
+            <div class="disaster-card" onclick="selectEmergencyType('earthquake')" data-type="earthquake">
+              <i class="fas fa-house-damage"></i>
+              <h3>Earthquake</h3>
+            </div>
+            <div class="disaster-card" onclick="selectEmergencyType('fire')" data-type="fire">
+              <i class="fas fa-fire"></i>
+              <h3>Fire</h3>
+            </div>
+            <div class="disaster-card" onclick="selectEmergencyType('medical')" data-type="medical">
+              <i class="fas fa-ambulance"></i>
+              <h3>Medical</h3>
+            </div>
+            <div class="disaster-card" onclick="selectEmergencyType('accident')" data-type="accident">
+              <i class="fas fa-car-crash"></i>
+              <h3>Accident</h3>
+            </div>
+            <div class="disaster-card" onclick="selectEmergencyType('storm')" data-type="storm">
+              <i class="fas fa-bolt"></i>
+              <h3>Storm</h3>
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 2rem;">
+            <button class="role-btn" onclick="proceedToUserForm()" id="proceed-btn" disabled>
+              <i class="fas fa-arrow-right"></i> Continue
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- User Information Form -->
+      <div id="user-form-section" class="user-form" style="display: none;">
+        <div class="card">
+          <h1 style="text-align: center; margin-bottom: 1rem;">
+            <i class="fas fa-user"></i> Your Information
+          </h1>
+          <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">
+            Please provide your contact information for emergency response coordination
+          </p>
+          
+          <form id="user-info-form">
+            <div class="form-group">
+              <label for="user-name">
+                <i class="fas fa-user"></i> Full Name *
+              </label>
+              <input type="text" id="user-name" name="userName" required placeholder="Enter your full name">
+            </div>
+            
+            <div class="form-group">
+              <label for="user-phone">
+                <i class="fas fa-phone"></i> Contact Number *
+              </label>
+              <input type="tel" id="user-phone" name="userPhone" required placeholder="Enter your phone number" pattern="[0-9]{10}" maxlength="10">
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+              <button type="button" class="btn-secondary" onclick="goBackToSelection()" style="margin-right: 1rem;">
+                <i class="fas fa-arrow-left"></i> Back
+              </button>
+              <button type="button" class="role-btn" onclick="proceedToSOS()">
+                <i class="fas fa-arrow-right"></i> Proceed to SOS
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- SOS Alert Section -->
+      <div id="sos-section" class="card" style="max-width: 600px; margin: 0 auto; display: none;">
+        <h1 style="text-align: center; margin-bottom: 1rem;">
+          <i class="fas fa-exclamation-triangle"></i> <span id="selected-disaster-title">Emergency</span> Alert
+        </h1>
+        <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">
+          Press the SOS button to immediately alert emergency services with your location and emergency type.
+        </p>
+        
+        <div class="sos-container">
+          <button class="sos-btn" onclick="sendSOS()">
+            <i class="fas fa-exclamation"></i>
+            SOS
+          </button>
+          
+          <div class="voice-controls">
+            <button class="voice-btn" id="voice-toggle" onclick="toggleVoiceActivation()">
+              <i class="fas fa-microphone" id="voice-icon"></i>
+              <span id="voice-text">Enable Voice SOS</span>
+            </button>
+            <div class="voice-status" id="voice-status">
+              <i class="fas fa-info-circle"></i>
+              Say "Crisis Emergency" or "Help Me" to activate SOS
+            </div>
+          </div>
+        </div>
+        
+        <div id="sos-status" class="status" style="display: none;"></div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+          <button class="btn-secondary" onclick="goBackToSelection()" style="margin-right: 1rem;">
+            <i class="fas fa-arrow-left"></i> Change Emergency Type
+          </button>
+          <button class="role-btn" onclick="toggleChatbot()">
+            <i class="fas fa-comments"></i> Emergency Assistant
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rescue Team Page -->
+    <div id="rescue-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="card">
+        <h1 style="text-align: center; margin-bottom: 2rem;">
+          <i class="fas fa-map-marked-alt"></i> Rescue Command Center
+        </h1>
+        <p style="text-align: center; margin-bottom: 2rem;">
+          Real-time monitoring of emergency alerts and rescue operations.
+        </p>
+        
+        <div id="map-container">
+          <div id="map"></div>
+          <div id="map-fallback" style="display: none;">
+            <div style="text-align: center; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+              <i class="fas fa-map" style="font-size: 3rem; color: #ff4757; margin-bottom: 1rem;"></i>
+              <h3>Emergency Alerts Monitor</h3>
+              <p>Real-time emergency alerts will appear below</p>
+              <div id="alert-list" style="margin-top: 1rem;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Us Page -->
+    <div id="about-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <section class="hero">
+        <h1><i class="fas fa-info-circle"></i> About Us</h1>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number"><i class="fas fa-users"></i></div>
+            <div class="stat-label">Our Team</div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Dedicated emergency response professionals working 24/7 to save lives and provide immediate assistance during disasters.</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number"><i class="fas fa-shield-alt"></i></div>
+            <div class="stat-label">Our Mission</div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">To provide rapid emergency response services and connect victims with rescue teams through advanced technology and real-time coordination.</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number"><i class="fas fa-heart"></i></div>
+            <div class="stat-label">Our Values</div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Compassion, reliability, and innovation in emergency response. Every second counts when lives are at stake.</p>
+          </div>
+        </div>
+        
+        <div class="card" style="max-width: 800px; margin: 2rem auto; text-align: left;">
+          <h2><i class="fas fa-building"></i>Emergency Response System</h2>
+          <p style="margin: 1rem 0; line-height: 1.6;">Founded in 2025, our Emergency Response System is a cutting-edge platform designed to bridge the gap between disaster victims and rescue teams.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Contact Rescue Team Page -->
+    <div id="contact-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <section class="hero">
+        <h1><i class="fas fa-phone-alt"></i> Contact Rescue Team</h1>
+        <p>Get in touch with our emergency response teams and support services</p>
+        
+        <div class="dashboard" style="margin: 2rem 0;">
+          <div class="card">
+            <h2><i class="fas fa-ambulance"></i>Emergency Hotlines</h2>
+            <div style="text-align: left; margin: 1rem 0;">
+              <p><strong><i class="fas fa-phone"></i> National Emergency:</strong> 112</p>
+              <p><strong><i class="fas fa-fire"></i> Fire Department:</strong> 101</p>
+              <p><strong><i class="fas fa-user-md"></i> Medical Emergency:</strong> 108</p>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h2><i class="fas fa-headset"></i>Support Center</h2>
+            <div style="text-align: left; margin: 1rem 0;">
+              <p><strong><i class="fas fa-envelope"></i> Email:</strong> emergency@rescuesupport.in</p>
+              <p><strong><i class="fas fa-phone"></i> Support Line:</strong> +91-9876543210</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Emergency Preparedness Page -->
+    <div id="preparedness-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <section class="hero">
+        <h1><i class="fas fa-clipboard-list"></i> Emergency Preparedness</h1>
+        <p>Be prepared for disasters with our comprehensive emergency planning tools</p>
+        
+        <div class="tab-container">
+          <button class="tab-btn active" onclick="showTab('kit')">Emergency Kit</button>
+          <button class="tab-btn" onclick="showTab('plan')">Family Plan</button>
+          <button class="tab-btn" onclick="showTab('guides')">Safety Guides</button>
+          <button class="tab-btn" onclick="showTab('contacts')">Emergency Contacts</button>
+        </div>
+
+        <!-- Emergency Kit Tab -->
+        <div id="kit-tab" class="tab-content active">
+          <div class="card">
+            <h2><i class="fas fa-box"></i> Emergency Kit Checklist</h2>
+            <p>Build your emergency kit with these essential items. Check off items as you collect them.</p>
+            
+            <div class="progress-bar">
+              <div class="progress-fill" id="kit-progress" style="width: 0%;"></div>
+            </div>
+            <p id="kit-status">0% Complete - 0 of 20 items ready</p>
+            
+            <div class="checklist" id="emergency-kit">
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>💧 Water (1 gallon per person per day for 3 days)</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🥫 Non-perishable food (3-day supply)</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🔦 Flashlight with extra batteries</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>📻 Battery-powered or hand crank radio</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🩹 First aid kit</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>💊 Medications (7-day supply)</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🔧 Multi-purpose tool or Swiss Army knife</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>📱 Cell phone with chargers and backup battery</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>💰 Cash and credit cards</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>📄 Important documents (copies)</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🧯 Fire extinguisher</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🥽 Dust masks and plastic sheeting</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🧼 Personal hygiene items</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>👕 Change of clothing and sturdy shoes</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🛏️ Blankets or sleeping bags</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🔥 Matches in waterproof container</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🍼 Baby supplies (if needed)</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🐕 Pet supplies (if needed)</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>📋 Emergency contact information</span>
+              </div>
+              <div class="checklist-item">
+                <input type="checkbox" onchange="updateProgress()">
+                <span>🗺️ Local maps and whistle</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Family Plan Tab -->
+        <div id="plan-tab" class="tab-content">
+          <div class="dashboard">
+            <div class="card">
+              <h2><i class="fas fa-users"></i> Family Emergency Plan</h2>
+              <div class="checklist">
+                <h3>Meeting Places</h3>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Identify a safe room in your home</span>
+                </div>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Choose a neighborhood meeting place</span>
+                </div>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Select an out-of-area meeting place</span>
+                </div>
+                
+                <h3>Communication Plan</h3>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Designate an out-of-state contact person</span>
+                </div>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Program emergency numbers in all phones</span>
+                </div>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Teach children how to call for help</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <h2><i class="fas fa-route"></i> Evacuation Planning</h2>
+              <div class="checklist">
+                <h3>Evacuation Routes</h3>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Know 2+ ways to exit your home</span>
+                </div>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Know 2+ ways to exit your neighborhood</span>
+                </div>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Practice evacuation routes regularly</span>
+                </div>
+                
+                <h3>Transportation</h3>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Keep vehicle fuel tank at least half full</span>
+                </div>
+                <div class="checklist-item">
+                  <input type="checkbox">
+                  <span>Have alternative transportation plan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safety Guides Tab -->
+        <div id="guides-tab" class="tab-content">
+          <div class="stats">
+            <div class="stat-card">
+              <div class="stat-number">🏠</div>
+              <div class="stat-label">Earthquake</div>
+              <p style="margin-top: 1rem; font-size: 0.9rem;">Drop, Cover, Hold. Stay away from windows. If outdoors, move away from buildings.</p>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">🔥</div>
+              <div class="stat-label">Fire</div>
+              <p style="margin-top: 1rem; font-size: 0.9rem;">Stay low, check doors, use stairs not elevators. Stop, drop, roll if clothes catch fire.</p>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">🌊</div>
+              <div class="stat-label">Flood</div>
+              <p style="margin-top: 1rem; font-size: 0.9rem;">Move to higher ground. Never walk or drive through flood water. 6 inches can knock you down.</p>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">🌪️</div>
+              <div class="stat-label">Tornado</div>
+              <p style="margin-top: 1rem; font-size: 0.9rem;">Go to lowest floor, interior room. Stay away from windows. Cover with blankets.</p>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">⛈️</div>
+              <div class="stat-label">Severe Storm</div>
+              <p style="margin-top: 1rem; font-size: 0.9rem;">Stay indoors, avoid windows. Unplug electronics. Stay away from water and metal objects.</p>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">🩹</div>
+              <div class="stat-label">First Aid</div>
+              <p style="margin-top: 1rem; font-size: 0.9rem;">Apply pressure to bleeding. CPR: 30 compressions, 2 breaths. Call emergency services immediately.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Contacts Tab -->
+        <div id="contacts-tab" class="tab-content">
+          <div class="card">
+            <h2><i class="fas fa-phone-alt"></i> Emergency Contact Manager</h2>
+            <p>Store and manage your emergency contacts. Keep this information updated and accessible.</p>
+            
+            <div style="margin: 2rem 0;">
+              <button class="role-btn" onclick="addContact()">
+                <i class="fas fa-plus"></i> Add Emergency Contact
+              </button>
+            </div>
+            
+            <div id="contact-list">
+              <div class="checklist-item">
+                <span><strong>Police:</strong> 100</span>
+              </div>
+              <div class="checklist-item">
+                <span><strong>Fire Department:</strong> 101</span>
+              </div>
+              <div class="checklist-item">
+                <span><strong>Medical Emergency:</strong> 108</span>
+              </div>
+              <div class="checklist-item">
+                <span><strong>National Emergency:</strong> 112</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Dr. Ayush Nigam Profile Page -->
+    <div id="ayush-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="dr Ayush nigam.jpg" alt="Dr. Ayush Nigam">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-user-md"></i> Dr. AYUSH NIGAM</h1>
+          <h2>Chief Emergency Coordinator</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-graduation-cap"></i> Education & Qualifications</h3>
+            <ul>
+              <li>MBBS - All India Institute of Medical Sciences (AIIMS), New Delhi</li>
+              <li>MD Emergency Medicine - Post Graduate Institute, Chandigarh</li>
+              <li>Fellowship in Disaster Management - National Disaster Management Authority</li>
+              <li>Advanced Trauma Life Support (ATLS) Certification</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>15+ years</strong> in Emergency Medicine and Disaster Response</li>
+              <li><strong>Chief Emergency Coordinator</strong> - Crisis Connect (2020-Present)</li>
+              <li><strong>Senior Emergency Physician</strong> - AIIMS Trauma Center (2015-2020)</li>
+              <li><strong>Disaster Response Team Leader</strong> - National Disaster Response Force (2012-2015)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Specializations & Achievements</h3>
+            <ul>
+              <li>Emergency Medical Response & Trauma Care</li>
+              <li>Disaster Management & Crisis Coordination</li>
+              <li>Mass Casualty Incident Management</li>
+              <li>Led rescue operations during 2013 Uttarakhand floods</li>
+              <li>Coordinated medical response for 2020 Delhi riots</li>
+              <li>Published 25+ research papers on emergency medicine</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-envelope"></i> dr.ayush@crisisconnect.in</p>
+            <p><i class="fas fa-phone"></i> +91-7268920632 (Emergency Hotline)</p>
+            <p><i class="fas fa-clock"></i> Available 24/7 for Emergency Coordination</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dr. Soubhagya Gupta Profile Page -->
+    <div id="soubhagya-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="soubhagya gupta .jpg" alt="Dr. Soubhagya Gupta">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-user-md"></i> Dr. SOUBHAGYA GUPTA</h1>
+          <h2>Disaster Response Manager</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-graduation-cap"></i> Education & Qualifications</h3>
+            <ul>
+              <li>MBBS - King George's Medical University, Lucknow</li>
+              <li>MD Public Health - Jawaharlal Institute of Postgraduate Medical Education</li>
+              <li>Master's in Disaster Management - Jamia Millia Islamia, New Delhi</li>
+              <li>Certified Emergency Manager (CEM) - International Association of Emergency Managers</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>12+ years</strong> in Disaster Management and Public Health Emergency</li>
+              <li><strong>Disaster Response Manager</strong> - Crisis Connect (2021-Present)</li>
+              <li><strong>Regional Disaster Coordinator</strong> - State Disaster Management Authority, UP (2018-2021)</li>
+              <li><strong>Emergency Response Officer</strong> - WHO India (2015-2018)</li>
+              <li><strong>Medical Officer</strong> - District Hospital, Gorakhpur (2012-2015)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Specializations & Achievements</h3>
+            <ul>
+              <li>Multi-Hazard Disaster Risk Assessment & Management</li>
+              <li>Community-Based Disaster Preparedness Programs</li>
+              <li>Public Health Emergency Response Planning</li>
+              <li>Coordinated response during COVID-19 pandemic in UP</li>
+              <li>Led flood response operations in Eastern UP (2019-2020)</li>
+              <li>Developed early warning systems for rural communities</li>
+              <li>Trained 500+ community volunteers in disaster preparedness</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-envelope"></i> dr.soubhagya@crisisconnect.in</p>
+            <p><i class="fas fa-phone"></i> +91-7081150864 (Disaster Response Hotline)</p>
+            <p><i class="fas fa-clock"></i> Available 24/7 for Disaster Management</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dr. Prateek Awasthi Profile Page -->
+    <div id="prateek-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="prateek awasthi.jpg" alt="Dr. Prateek Awasthi">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-cogs"></i> Dr. PRATEEK AWASTHI</h1>
+          <h2>Technical Operations Head</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-graduation-cap"></i> Education & Qualifications</h3>
+            <ul>
+              <li>B.Tech Computer Science - Indian Institute of Technology (IIT), Kanpur</li>
+              <li>M.Tech Information Technology - Indian Institute of Science (IISc), Bangalore</li>
+              <li>PhD Emergency Systems Engineering - IIT Delhi</li>
+              <li>Certified Information Systems Security Professional (CISSP)</li>
+              <li>AWS Certified Solutions Architect - Professional</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>14+ years</strong> in Emergency Technology Systems and Operations</li>
+              <li><strong>Technical Operations Head</strong> - Crisis Connect (2019-Present)</li>
+              <li><strong>Senior Systems Architect</strong> - National Informatics Centre (2016-2019)</li>
+              <li><strong>Lead Software Engineer</strong> - Infosys Technologies (2013-2016)</li>
+              <li><strong>Technology Consultant</strong> - Disaster Management Division, MHA (2011-2013)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Specializations & Achievements</h3>
+            <ul>
+              <li>Emergency Response Technology Systems Design</li>
+              <li>Real-time GPS Tracking & Geolocation Services</li>
+              <li>AI-powered Emergency Alert Systems</li>
+              <li>Developed Crisis Connect's core emergency platform</li>
+              <li>Built India's first real-time disaster mapping system</li>
+              <li>Implemented 24/7 monitoring infrastructure</li>
+              <li>Led digital transformation of emergency services</li>
+              <li>Published 15+ papers on emergency technology systems</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-envelope"></i> dr.prateek@crisisconnect.in</p>
+            <p><i class="fas fa-phone"></i> +91-7234963002 (Technical Support Hotline)</p>
+            <p><i class="fas fa-clock"></i> Available 24/7 for Technical Operations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prince Yadav Profile Page -->
+    <div id="prince-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="prince yadav.jpg" alt="Prince Yadav">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-map-marker-alt"></i> PRINCE YADAV</h1>
+          <h2>Regional Coordinator - North India</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>8+ years</strong> in Emergency Response Coordination</li>
+              <li><strong>Regional Coordinator</strong> - Crisis Connect (2020-Present)</li>
+              <li><strong>Emergency Response Officer</strong> - Delhi Disaster Management Authority (2017-2020)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Key Responsibilities</h3>
+            <ul>
+              <li>Coordinates emergency response across North India</li>
+              <li>Manages rescue operations in Delhi, Punjab, Haryana, Himachal Pradesh</li>
+              <li>Led response during Delhi air pollution emergency (2021)</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-98318032476</p>
+            <p><i class="fas fa-envelope"></i> prince.yadav@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aditya Gupta Profile Page -->
+    <div id="aditya-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="Aditya Gupta.jpg" alt="Aditya Gupta">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-map-marker-alt"></i> ADITYA GUPTA</h1>
+          <h2>Regional Coordinator - South India</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>7+ years</strong> in Disaster Management and Emergency Response</li>
+              <li><strong>Regional Coordinator</strong> - Crisis Connect (2021-Present)</li>
+              <li><strong>Emergency Operations Manager</strong> - Karnataka SDMA (2018-2021)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Key Responsibilities</h3>
+            <ul>
+              <li>Oversees emergency response in South India</li>
+              <li>Manages operations in Karnataka, Tamil Nadu, Kerala, Andhra Pradesh</li>
+              <li>Coordinated cyclone response operations (2022-2023)</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-7310332505</p>
+            <p><i class="fas fa-envelope"></i> aditya.gupta@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MD Aman Profile Page -->
+    <div id="aman-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="md.Aman.jpg" alt="MD Aman">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-map-marker-alt"></i> MD. AMAN</h1>
+          <h2>Regional Coordinator - East India</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>9+ years</strong> in Emergency Response and Flood Management</li>
+              <li><strong>Regional Coordinator</strong> - Crisis Connect (2020-Present)</li>
+              <li><strong>Flood Response Specialist</strong> - West Bengal SDMA (2016-2020)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Key Responsibilities</h3>
+            <ul>
+              <li>Manages emergency response across East India</li>
+              <li>Coordinates operations in West Bengal, Odisha, Jharkhand, Bihar</li>
+              <li>Specialized in monsoon flood response and cyclone management</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-6307426226</p>
+            <p><i class="fas fa-envelope"></i> md.aman@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avinash Upadhyay Profile Page -->
+    <div id="avinash-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="avinash upadhaya.jpg" alt="Avinash Upadhyay">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-map-marker-alt"></i> AVINASH UPADHYAY</h1>
+          <h2>Regional Coordinator - West India</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>10+ years</strong> in Disaster Response and Industrial Emergency Management</li>
+              <li><strong>Regional Coordinator</strong> - Crisis Connect (2019-Present)</li>
+              <li><strong>Industrial Safety Manager</strong> - Gujarat SDMA (2015-2019)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Key Responsibilities</h3>
+            <ul>
+              <li>Coordinates emergency response in West India</li>
+              <li>Manages operations in Gujarat, Maharashtra, Rajasthan, Goa</li>
+              <li>Expertise in industrial accidents and earthquake response</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-7398421459</p>
+            <p><i class="fas fa-envelope"></i> avinash.upadhyay@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dr. Vaibhav Nigam Profile Page -->
+    <div id="vaibhav-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="vaibhav nigam.jpg" alt="Dr. Vaibhav Nigam">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-user-md"></i> Dr. VAIBHAV NIGAM</h1>
+          <h2>Medical Emergency Specialist</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>11+ years</strong> in Emergency Medicine and Critical Care</li>
+              <li><strong>Medical Emergency Specialist</strong> - Crisis Connect (2021-Present)</li>
+              <li><strong>Emergency Physician</strong> - AIIMS Emergency Department (2018-2021)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Specializations</h3>
+            <ul>
+              <li>Critical Care Medicine and Trauma Surgery</li>
+              <li>Mass Casualty Medical Response</li>
+              <li>Emergency Medical Protocols Development</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-9876543210</p>
+            <p><i class="fas fa-envelope"></i> dr.vaibhav@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Captain Aman Nigam Profile Page -->
+    <div id="aman-nigam-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="aman nigam.jpg" alt="Captain Aman Nigam">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-fire"></i> CAPTAIN AMAN NIGAM</h1>
+          <h2>Fire & Rescue Operations Head</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>13+ years</strong> in Fire Fighting and Rescue Operations</li>
+              <li><strong>Fire & Rescue Head</strong> - Crisis Connect (2020-Present)</li>
+              <li><strong>Station Officer</strong> - Delhi Fire Service (2015-2020)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Specializations</h3>
+            <ul>
+              <li>High-rise Building Fire Rescue</li>
+              <li>Industrial Fire Safety and Hazmat Response</li>
+              <li>Urban Search and Rescue Operations</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-8765432109</p>
+            <p><i class="fas fa-envelope"></i> captain.aman@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engineer Akash Nigam Profile Page -->
+    <div id="akash-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="akash nigam .jpg" alt="Engineer Akash Nigam">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-water"></i> ENGINEER AKASH NIGAM</h1>
+          <h2>Flood Response Engineering Head</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>9+ years</strong> in Hydraulic Engineering and Flood Management</li>
+              <li><strong>Flood Response Engineer</strong> - Crisis Connect (2021-Present)</li>
+              <li><strong>Water Resources Engineer</strong> - Central Water Commission (2017-2021)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Specializations</h3>
+            <ul>
+              <li>Flood Forecasting and Early Warning Systems</li>
+              <li>Emergency Dam Safety and Water Release Management</li>
+              <li>Rapid Deployment Flood Barriers</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-7654321098</p>
+            <p><i class="fas fa-envelope"></i> engineer.akash@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Geologist Ayush Nigam Profile Page -->
+    <div id="geologist-ayush-profile-page" class="page">
+      <button class="back-btn" onclick="showPage('home')">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      
+      <div class="profile-container">
+        <div class="profile-image">
+          <img src="geologist ayush nigam.jpg" alt="Geologist Ayush Nigam">
+        </div>
+        <div class="profile-info">
+          <h1><i class="fas fa-mountain"></i> GEOLOGIST AYUSH NIGAM</h1>
+          <h2>Earthquake Response Specialist</h2>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+            <ul>
+              <li><strong>12+ years</strong> in Seismology and Earthquake Response</li>
+              <li><strong>Earthquake Response Specialist</strong> - Crisis Connect (2020-Present)</li>
+              <li><strong>Senior Seismologist</strong> - Geological Survey of India (2016-2020)</li>
+            </ul>
+          </div>
+          
+          <div class="info-section">
+            <h3><i class="fas fa-award"></i> Specializations</h3>
+            <ul>
+              <li>Seismic Risk Assessment and Monitoring</li>
+              <li>Post-Earthquake Structural Safety Evaluation</li>
+              <li>Landslide and Ground Stability Analysis</li>
+            </ul>
+          </div>
+          
+          <div class="contact-info">
+            <h3><i class="fas fa-phone"></i> Contact Information</h3>
+            <p><i class="fas fa-phone"></i> +91-6543210987</p>
+            <p><i class="fas fa-envelope"></i> geologist.ayush@crisisconnect.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Victim Registration Page -->
+    <div id="victim-registration-page" class="page">
+      <div class="card" style="max-width: 500px; margin: 2rem auto;">
+        <h2><i class="fas fa-user-plus"></i> Victim Registration</h2>
+        <p style="margin-bottom: 2rem; color: var(--text-secondary);">Create your emergency response account</p>
+        
+        <form id="registration-form" onsubmit="handleVictimRegistration(event)">
+          <div class="form-group">
+            <label for="reg-name">Full Name *</label>
+            <input type="text" id="reg-name" required placeholder="Enter your full name">
+          </div>
+          
+          <div class="form-group">
+            <label for="reg-phone">Phone Number *</label>
+            <input type="tel" id="reg-phone" required placeholder="Enter your phone number" pattern="[0-9]{10}" maxlength="10">
+          </div>
+          
+          <div class="form-group">
+            <label for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" placeholder="Enter your email (optional)">
+          </div>
+          
+          <div class="form-group">
+            <label for="reg-address">Address *</label>
+            <textarea id="reg-address" required placeholder="Enter your full address" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-primary); color: var(--text-primary); font-size: 1rem; resize: vertical;"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="reg-pin">Create 4-digit PIN *</label>
+            <input type="password" id="reg-pin" required placeholder="Create emergency PIN" maxlength="4" pattern="[0-9]{4}">
+          </div>
+          
+          <div class="form-group">
+            <label for="reg-confirm-pin">Confirm PIN *</label>
+            <input type="password" id="reg-confirm-pin" required placeholder="Confirm your PIN" maxlength="4" pattern="[0-9]{4}">
+          </div>
+          
+          <button type="submit" class="role-btn" style="width: 100%; margin: 1rem 0;">
+            <i class="fas fa-user-plus"></i> Register Account
+          </button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 1rem;">
+          <a href="#" onclick="toggleLoginSlider()" style="color: var(--primary-color); text-decoration: none;">Already have an account? Login here</a>
+        </p>
+      </div>
+    </div>
+
+
+  </main>
+
+  <!-- Login Slider -->
+  <div class="login-slider" id="login-slider">
+    <div class="slider-header">
+      <h2><i class="fas fa-sign-in-alt"></i> Login Portal</h2>
+      <button class="close-slider" onclick="toggleLoginSlider()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="showLoginTab('victim')">Victim Login</button>
+      <button class="login-tab" onclick="showLoginTab('rescue')">Rescue Team</button>
+    </div>
+    
+    <!-- Victim Login -->
+    <div id="victim-login" class="login-section active">
+      <div class="login-form"> 
+        <h3><i class="fas fa-user"></i> Victim Access</h3>
+        <form onsubmit="handleVictimLogin(event)">
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="victim-phone" placeholder="Enter your phone number" required pattern="[0-9]{10}" maxlength="10">
+          </div>
+          <div class="form-group">
+            <label>Emergency PIN</label>
+            <input type="password" id="victim-pin" placeholder="Enter 4-digit PIN" maxlength="4" required>
+          </div>
+          <button type="submit" class="login-btn victim-btn">
+            <i class="fas fa-sign-in-alt"></i> Access Emergency Portal
+          </button>
+        </form>
+        <p class="login-help">New user? Any phone number with PIN "1234" works for demo</p>
+        <p style="text-align: center; margin-top: 1rem;">
+          <a href="#" onclick="showRegistrationPage()" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Don't have an account? Register here</a>
+        </p>
+      </div>
+    </div>
+    
+    <!-- Rescue Login -->
+    <div id="rescue-login" class="login-section">
+      <div class="login-form">
+        <h3><i class="fas fa-ambulance"></i> Rescue Team Access</h3>
+        <form onsubmit="handleRescueLogin(event)">
+          <div class="form-group">
+            <label>Team ID</label>
+            <input type="text" id="rescue-id" placeholder="Enter team ID" required>
+          </div>
+          <div class="form-group">  
+            <label>Password</label>
+            <input type="password" id="rescue-password" placeholder="Enter password" required>
+          </div>
+          <button type="submit" class="login-btn rescue-btn">
+            <i class="fas fa-shield-alt"></i> Access Command Center
+          </button>
+        </form>
+        <p class="login-help">Demo: ID "rescue123" with password "admin" works</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="slider-overlay" id="slider-overlay" onclick="toggleLoginSlider()"></div>
+
+  <!-- Chatbot -->
+  <div class="chatbot" id="chatbot" style="display: none;">
+    <div class="chatbot-header" onclick="toggleChatbot()">
+      <div>
+        <i class="fas fa-robot"></i>
+        <span>Emergency Assistant</span>
+      </div>
+      <i class="fas fa-times" id="chatbot-toggle"></i>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+      <div class="message bot">
+        <strong>🚨 Emergency Assistant</strong><br>
+        I'm here to help with disaster safety tips and emergency guidance. How can I assist you?
+      </div>
+      <div class="quick-questions">
+        <button class="quick-btn" onclick="askQuestion('earthquake')">Earthquake Safety</button>
+        <button class="quick-btn" onclick="askQuestion('fire')">Fire Emergency</button>
+        <button class="quick-btn" onclick="askQuestion('flood')">Flood Safety</button>
+        <button class="quick-btn" onclick="askQuestion('first-aid')">First Aid</button>
+      </div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatbot-input" placeholder="Ask about emergency safety..." onkeypress="handleChatKeypress(event)">
+      <button class="send-btn" onclick="sendChatMessage()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Emergency Response System | Protecting Lives Through Technology</p>
+    </div>
+  </footer>
+  </div>
+
+  <script src="script.js"></script>
+  <!-- Leaflet JavaScript for OpenStreetMap -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body>
+</html>
